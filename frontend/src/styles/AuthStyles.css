@@ -1,0 +1,169 @@
+/* Light silver background and center content */
+body {
+  background-color: #D3D3D3; /* Light Silver */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+/* Center the form container with black shadow */
+.auth-container {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px black;
+  max-width: 500px; 
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-form {
+  width: 100%;
+}
+
+/* Inputs with underline */
+.dashed-input {
+  border: none;
+  border-bottom: 2px solid black;
+  background: transparent;
+  padding: 8px;
+  width: 100%;
+  font-size: 16px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Input focus effect */
+.dashed-input:focus {
+  outline: none;
+  border-bottom: 2px solid black;
+}
+
+/* Black button styles */
+.black-button {
+  background-color: black !important;
+  border: none;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.black-button:hover {
+  background-color: #333 !important;
+}
+
+/* Signup form: place fields side by side */
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+/* Responsive for small screens */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+.auth-container h2 {
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 600px) {
+  .auth-container {
+    padding: 20px;
+  }
+}
+
+/* Dashboard Header and Footer Styles */
+.dashboard-header, .dashboard-footer {
+  background-color: #333; 
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-header h2, .dashboard-footer p {
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.user-creation-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: auto;
+}
+
+.user-creation-container h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.user-form .form-row {
+  margin-bottom: 20px;
+}
+
+.user-form .form-col {
+  width: 48%;
+}
+
+.user-form .black-button {
+  background-color: #333; 
+  width: 100%;
+  padding: 12px;
+}
+
+.user-form .black-button:hover {
+  background-color: #222;
+}
+
+.user-form .form-row .dashed-input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.dashboard-content {
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}

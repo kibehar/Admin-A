@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext", 
+    "module": "CommonJS", 
+    "moduleResolution": "Node", 
+    "esModuleInterop": true, 
+    "outDir": "./dist", 
+    "skipLibCheck": true, 
+    "strict": true, 
+    "resolveJsonModule": true, 
+    "noEmitOnError": true, 
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "types": ["node", "express"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/types/**/*.d.ts" 
+  ],
+  "exclude": [
+    "node_modules" 
+  ]
+}

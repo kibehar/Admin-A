@@ -1,0 +1,27 @@
+/* src/styles/global.css */
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-container, .dashboard-container, .admin-dashboard-page {
+    margin: 20px;
+    padding: 20px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+  }
+  
+  h2 {
+    color: silver;
+  }
+  
+  .ant-btn-primary {
+    background-color: silver;
+    border-color: silver;
+  }
+  
+  .ant-btn-primary:hover {
+    background-color: #f0f0f0;
+  }
+  

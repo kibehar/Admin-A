@@ -1,0 +1,47 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #D3D3D3;
+    display: block;
+    width: 100%;
+  }
+  
+  .dashboard-header, .dashboard-footer {
+    background-color: #333333; 
+    color: white;
+  }
+  
+  .dashboard-header {
+    padding: 0 20px;
+  }
+  
+  .dashboard-header .logo {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    float: left;
+  }
+  
+  
+  .dashboard-content {
+    padding: 20px;
+  }
+  
+  .dashboard-footer {
+    background-color: #333333; 
+    text-align: center;
+    padding: 10px 0;
+    color: white;
+  }
+  
+  .ant-layout {
+    min-height: 100vh;
+  }
+  
+  .dashboard-header-menu .ant-menu-item {
+    color: white;
+  }
+  
+
+  
