@@ -1,47 +1,101 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #D3D3D3;
-    display: block;
-    width: 100%;
-  }
-  
-  .dashboard-header, .dashboard-footer {
-    background-color: #333333; 
-    color: white;
-  }
-  
-  .dashboard-header {
-    padding: 0 20px;
-  }
-  
-  .dashboard-header .logo {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    float: left;
-  }
-  
-  
-  .dashboard-content {
-    padding: 20px;
-  }
-  
-  .dashboard-footer {
-    background-color: #333333; 
-    text-align: center;
-    padding: 10px 0;
-    color: white;
-  }
-  
-  .ant-layout {
-    min-height: 100vh;
-  }
-  
-  .dashboard-header-menu .ant-menu-item {
-    color: white;
-  }
-  
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #f0f2f5; /* Light background color */
+  display: block;
+  width: 100%;
+}
 
-  
+.dashboard-header, .dashboard-footer {
+  background-color: #333333;
+  color: white;
+}
+
+.dashboard-header {
+  padding: 0 20px;
+}
+
+.dashboard-header .logo {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  float: left;
+}
+
+.dashboard-title {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.profile-btn {
+  color: white;
+  background-color: #1e88e5;
+  border: none;
+  margin-left: auto;
+}
+
+.profile-btn:hover {
+  background-color: #1565c0;
+}
+
+.dashboard-sidebar {
+  background-color: #2e2e2e;
+  color: white;
+}
+
+.dashboard-sidebar .logo {
+  text-align: center;
+  padding: 16px;
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+}
+
+.dashboard-sidebar .ant-menu-item {
+  color: white;
+}
+
+.dashboard-sidebar .ant-menu-item:hover {
+  background-color: #3a3a3a;
+}
+
+.dashboard-sidebar .ant-menu-item-active {
+  background-color: #1e88e5 !important;
+}
+
+.dashboard-content {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin: 24px;
+}
+
+.dashboard-footer {
+  background-color: #333333;
+  text-align: center;
+  padding: 10px 0;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+.ant-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

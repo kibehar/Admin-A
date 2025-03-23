@@ -101,13 +101,39 @@ export const deleteUser = async (req: Request, res: Response): Promise<Response>
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response): Promise<Response> => {
+export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find({}, "-password"); 
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const search = (req.query.search as string) || "";
+    const role = (req.query.role as string) || "";
 
-    return res.status(200).json(users);
+    const skip = (page - 1) * limit;
+
+    let query: any = {};
+
+    // 🔍 Search by name, email, or username (case insensitive)
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { username: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // 🎯 Filter by Role
+    if (role) {
+      query.role = role;
+    }
+
+    const users = await User.find(query).skip(skip).limit(limit);
+    const total = await User.countDocuments(query);
+
+    res.json({ users, total });
   } catch (error) {
     console.error("Error fetching users:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Error fetching users" });
   }
 };
+

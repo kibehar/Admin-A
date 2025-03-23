@@ -6,10 +6,10 @@ import { getUserProfile, updateUserProfile } from '../controllers/UserProfileCon
 const router = express.Router();
 
 router.post("/usercreation", authenticateJWT, createUser);
-router.put("/update/:userId", authenticateJWT, updateUser);  
+router.put("/update/:userId", updateUser);  
 router.delete("/delete/:userId", deleteUser);
 router.get('/profile', authenticateJWT, getUserProfile);
-router.get("/all", authenticateJWT, getAllUsers); 
+router.get("/all", getAllUsers);
 router.put('/profile', authenticateJWT, updateUserProfile);
 
 export default router;

@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Select } from "antd";
+import { Table, Button, Pagination, message } from "antd";
 import { getUsers, deleteUser } from "../api/api"; 
+import UserEditModal from "./UserEditModal"; 
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [roleFilter, setRoleFilter] = useState<string | undefined>(undefined);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null); // Track selected user for editing
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Track modal visibility
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, roleFilter]);
+  }, [currentPage]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await getUsers();
-      const filteredUsers = roleFilter
-        ? response.filter((user: any) => user.role === roleFilter)
-        : response;
-      setUsers(filteredUsers);
+      const response = await getUsers(currentPage, 5);
+      setUsers(response.users);
+      setTotalUsers(response.total);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
@@ -30,24 +31,21 @@ const UserList: React.FC = () => {
   const handleDelete = async (userId: string) => {
     try {
       await deleteUser(userId);
-      fetchUsers();
+      message.success("User deleted successfully");
+      fetchUsers(); // Refresh the list after deletion
     } catch (error) {
       console.error("Failed to delete user:", error);
+      message.error("Failed to delete user");
     }
+  };
+
+  const handleEdit = (user: any) => {
+    setSelectedUser(user);
+    setIsEditModalVisible(true);
   };
 
   return (
     <div>
-      <Select
-        style={{ width: 200, marginBottom: 20 }}
-        placeholder="Filter by Role"
-        onChange={(value) => setRoleFilter(value)}
-        value={roleFilter}
-      >
-        <Select.Option value="Worker 1">Worker 1</Select.Option>
-        <Select.Option value="Worker 2">Worker 2</Select.Option>
-      </Select>
-
       <Table
         dataSource={users}
         loading={loading}
@@ -61,21 +59,40 @@ const UserList: React.FC = () => {
           { title: "Role", dataIndex: "role" },
           {
             title: "Actions",
-            render: (text, record) => (
-              <Button onClick={() => handleDelete(record._id)}>Delete</Button>
+            render: (_, record) => (
+              <>
+                <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>
+                  Edit
+                </Button>
+                <Button onClick={() => handleDelete(record._id)} danger>
+                  Delete
+                </Button>
+              </>
             ),
           },
         ]}
       />
+
       <Pagination
         current={currentPage}
         pageSize={5}
-        total={50} 
+        total={totalUsers}
         onChange={(page) => setCurrentPage(page)}
         style={{ marginTop: 20 }}
       />
+
+      {/* User Edit Modal */}
+      {selectedUser && (
+        <UserEditModal
+          visible={isEditModalVisible}
+          user={selectedUser}
+          onClose={() => setIsEditModalVisible(false)}
+          onUpdate={fetchUsers} // Refresh the user list after update
+        />
+      )}
     </div>
   );
 };
 
 export default UserList;
+
