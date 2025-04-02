@@ -2,6 +2,16 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/auth";
 const API_URLUser = "http://localhost:5000/api/users";
+// Inventory API URLs
+const API_URLInventory = "http://localhost:5000/api/inventory";
+
+
+export const getInventory = async () => axios.get(`${API_URLInventory}`).then((res) => res.data);
+export const getInventoryItem = async (id: string) => axios.get(`${API_URLInventory}/${id}`).then((res) => res.data);
+export const addInventoryItem = async (data: any) => axios.post(`${API_URLInventory}/add`, data);
+export const updateInventoryItem = async (id: string, data: any) => axios.put(`${API_URLInventory}/update/${id}`, data);
+export const deleteInventoryItem = async (id: string) => axios.delete(`${API_URLInventory}/delete/${id}`);
+export const getSuppliers = async () => axios.get(`${API_URLInventory}/suppliers`).then((res) => res.data);
 
 export const adminSignup = async (data: any) => {
   return axios.post(`${API_URL}/signup`, data);
@@ -25,11 +35,11 @@ export const createUser = async (userData: any) => {
 };
 
 /**
- * Fetch users with pagination, search, and role filter
- * @param {number} page - Page number
- * @param {number} limit - Number of users per page
- * @param {string} search - Search query (optional)
- * @param {string} role - Role filter (optional)
+ *
+ * @param {number} page 
+ * @param {number} limit 
+ * @param {string} search 
+ * @param {string} role 
  */
 export const getUsers = async (page = 1, limit = 5, search = "", role = "") => {
   try {
@@ -70,6 +80,37 @@ export const updateUser = async (userId: string, userData: any) => {
     });
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+export const getAdminProfile = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.get(`${API_URL}/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching admin profile:", error);
+    throw error;
+  }
+};
+
+export const updateAdminProfile = async (profileData: any) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.put(`${API_URL}/profile`, profileData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating admin profile:", error);
     throw error;
   }
 };

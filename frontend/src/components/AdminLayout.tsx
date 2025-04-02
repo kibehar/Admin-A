@@ -13,9 +13,9 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
+      {}
       <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} className="dashboard-sidebar">
-        <div className="logo">Admin Page</div>
+        <div className="logo">Admin Dashboard</div>
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
           <Menu.Item key="1" icon={<HomeOutlined />}><Link to="/dashboard">Home</Link></Menu.Item>
           <Menu.Item key="2" icon={<UserOutlined />}><Link to="/users">User</Link></Menu.Item>
@@ -27,7 +27,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </Sider>
 
       <Layout>
-        {/* Header */}
+        {}
         <Header className="dashboard-header">
           <div className="header-content">
             <Button className="profile-btn" onClick={() => setIsProfileModalVisible(true)}>
@@ -36,12 +36,12 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </Header>
 
-        {/* Page Content */}
+        {}
         <Content className="dashboard-content">
-          {children} {/* This will be replaced by whatever page content */}
+          {children} {}
         </Content>
 
-        {/* Footer */}
+        {}
         <Footer className="dashboard-footer">
           <p>Admin Footer</p>
         </Footer>

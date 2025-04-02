@@ -112,7 +112,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
     let query: any = {};
 
-    // 🔍 Search by name, email, or username (case insensitive)
     if (search) {
       query.$or = [
         { firstName: { $regex: search, $options: "i" } },
@@ -122,7 +121,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
       ];
     }
 
-    // 🎯 Filter by Role
     if (role) {
       query.role = role;
     }

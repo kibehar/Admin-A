@@ -53,7 +53,7 @@ const UserPage: React.FC = () => {
 
   return (
     <AdminLayout>
-      {/* 🔍 Search and Filter UI */}
+      {}
       <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
         <Search
           placeholder="Search by name, email, username"
@@ -74,12 +74,12 @@ const UserPage: React.FC = () => {
         <Button type="primary" onClick={() => setIsModalVisible(true)}>Create User</Button>
       </div>
 
-      {/* 🔽 Create User Modal */}
+      {}
       <Modal title="Create User" open={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} width={800}>
         <UserCreation />
       </Modal>
 
-      {/* 🏁 User Table */}
+      {}
       <Table
         dataSource={users}
         loading={loading}
@@ -107,7 +107,7 @@ const UserPage: React.FC = () => {
         ]}
       />
 
-      {/* 📌 Pagination */}
+      {}
       <Pagination
         current={currentPage}
         pageSize={pageSize}
@@ -116,7 +116,7 @@ const UserPage: React.FC = () => {
         style={{ marginTop: 20 }}
       />
 
-      {/* ✏️ Edit User Modal */}
+      {}
       <UserEditModal
         visible={isEditModalVisible}
         user={selectedUser}

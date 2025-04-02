@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, message } from "antd";
-import { getUsers, deleteUser } from "../api/api"; 
-import UserEditModal from "./UserEditModal"; 
+import { Table, Button, Pagination, message, Modal } from "antd";
+import { getUsers, deleteUser } from "../api/api";
+import UserEditModal from "./UserEditModal";
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [selectedUser, setSelectedUser] = useState<any | null>(null); // Track selected user for editing
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // Track modal visibility
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -28,11 +28,22 @@ const UserList: React.FC = () => {
     }
   };
 
+  const confirmDelete = (userId: string) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this user?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => handleDelete(userId),
+    });
+  };
+
   const handleDelete = async (userId: string) => {
     try {
       await deleteUser(userId);
       message.success("User deleted successfully");
-      fetchUsers(); // Refresh the list after deletion
+      fetchUsers();
     } catch (error) {
       console.error("Failed to delete user:", error);
       message.error("Failed to delete user");
@@ -64,7 +75,7 @@ const UserList: React.FC = () => {
                 <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>
                   Edit
                 </Button>
-                <Button onClick={() => handleDelete(record._id)} danger>
+                <Button onClick={() => confirmDelete(record._id)} danger>
                   Delete
                 </Button>
               </>
@@ -81,13 +92,12 @@ const UserList: React.FC = () => {
         style={{ marginTop: 20 }}
       />
 
-      {/* User Edit Modal */}
       {selectedUser && (
         <UserEditModal
           visible={isEditModalVisible}
           user={selectedUser}
           onClose={() => setIsEditModalVisible(false)}
-          onUpdate={fetchUsers} // Refresh the user list after update
+          onUpdate={fetchUsers}
         />
       )}
     </div>
@@ -95,4 +105,3 @@ const UserList: React.FC = () => {
 };
 
 export default UserList;
-

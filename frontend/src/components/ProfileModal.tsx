@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Input, Form, message } from "antd";
-import axios from "axios";
+import { Modal, Button, Input, Form, message, Spin } from "antd";
+import { getAdminProfile, updateAdminProfile } from "../api/api";
 
 interface ProfileModalProps {
   isVisible: boolean;
@@ -8,80 +8,76 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isVisible, onClose }) => {
-  const [profile, setProfile] = useState<any>({});
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          message.error("No authentication token found. Please log in again.");
-          return;
-        }
-
-        const response = await axios.get("http://localhost:5000/api/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setProfile(response.data);
+        setLoading(true);
+        const profileData = await getAdminProfile();
+        form.setFieldsValue(profileData);
       } catch (error) {
-        console.error("Error fetching profile:", error);
         message.error("Failed to fetch profile. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
     if (isVisible) {
       fetchProfile();
     }
-  }, [isVisible]);
-
-  const handleEditClick = () => setIsEditing(true);
+  }, [isVisible, form]);
 
   const handleSave = async (values: any) => {
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        message.error("No authentication token found. Please log in again.");
-        return;
-      }
-
-      await axios.put("http://localhost:5000/api/auth/profile", values, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      setLoading(true);
+      await updateAdminProfile(values);
       message.success("Profile updated successfully.");
-      onClose(); 
       setIsEditing(false);
+      onClose();
     } catch (error) {
-      console.error("Error updating profile:", error);
       message.error("Failed to update profile. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Modal title="Admin Profile" visible={isVisible} onCancel={onClose} footer={null}>
-      <Form layout="vertical" initialValues={profile} onFinish={handleSave} disabled={!isEditing}>
-        <Form.Item label="First Name" name="firstName" rules={[{ required: true, message: "Please enter your first name" }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Last Name" name="lastName" rules={[{ required: true, message: "Please enter your last name" }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Email" name="email" rules={[{ required: true, message: "Please enter your email" }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Username" name="username" rules={[{ required: true, message: "Please enter your username" }]}>
-          <Input />
-        </Form.Item>
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <Form form={form} layout="vertical" onFinish={handleSave}>
+          <Form.Item label="First Name" name="firstName" rules={[{ required: true, message: "Please enter your first name" }]}>
+            <Input disabled={!isEditing} />
+          </Form.Item>
+          <Form.Item label="Last Name" name="lastName" rules={[{ required: true, message: "Please enter your last name" }]}>
+            <Input disabled={!isEditing} />
+          </Form.Item>
+          <Form.Item label="Email" name="email" rules={[{ required: true, message: "Please enter your email" }]}>
+            <Input disabled={!isEditing} />
+          </Form.Item>
+          <Form.Item label="Username" name="username" rules={[{ required: true, message: "Please enter your username" }]}>
+            <Input disabled={!isEditing} />
+          </Form.Item>
 
-        <Button type="default" onClick={handleEditClick} style={{ marginRight: 10 }} disabled={isEditing}>
-          Edit
-        </Button>
-        <Button type="primary" htmlType="submit" disabled={!isEditing}>
-          Save
-        </Button>
-      </Form>
+          <Form.Item label="New Password" name="newPassword">
+            <Input.Password disabled={!isEditing} />
+          </Form.Item>
+          <Form.Item label="Confirm Password" name="confirmNewPassword">
+            <Input.Password disabled={!isEditing} />
+          </Form.Item>
+
+          <Button type="default" onClick={() => setIsEditing(true)} style={{ marginRight: 10 }} disabled={isEditing}>
+            Edit
+          </Button>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={!isEditing}>
+            Save
+          </Button>
+        </Form>
+      )}
     </Modal>
   );
 };
