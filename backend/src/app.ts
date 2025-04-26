@@ -10,8 +10,7 @@ import warehouseRoutes from "./routes/warehouseRoutes";
 import salesRoutes from "./routes/saleRoutes";  
 import supplierRoutes from "./routes/supplierRoutes";  
 import { swaggerUi, swaggerSpec } from './swagger'; 
-
-
+import categoryRoutes from "./routes/categoryRoutes";
 dotenv.config(); 
 const app = express();
 app.use(express.json());
@@ -30,6 +29,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/warehouses", warehouseRoutes);
 app.use("/api/sales", salesRoutes);  
 app.use("/api/suppliers", supplierRoutes);  
+app.use("/api/categories", categoryRoutes);
 
 console.log(listEndpoints(app)); 
 

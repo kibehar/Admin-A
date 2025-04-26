@@ -4,7 +4,6 @@ import {
   getInventoryById,
   addInventory,
   assignToWarehouse,
-  updateStock,
   deleteInventory,
   updateInventory,
   getLowStockItems,
@@ -148,7 +147,7 @@ router.put("/update-item/:id", updateInventory);
  *       404:
  *         description: Item not found
  */
-router.delete("/:id", deleteInventory);
+router.delete("/delete/:id", deleteInventory);
 
 /**
  * @swagger
@@ -176,31 +175,6 @@ router.delete("/:id", deleteInventory);
  *         description: Item or warehouse not found
  */
 router.put("/assign-to-warehouse", assignToWarehouse);
-
-/**
- * @swagger
- * /inventory/update-stock:
- *   put:
- *     summary: Update stock quantity
- *     tags: [Inventory]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               inventoryId:
- *                 type: string
- *               quantity:
- *                 type: integer
- *     responses:
- *       200:
- *         description: Stock updated
- *       404:
- *         description: Item not found
- */
-router.put("/update-stock", updateStock);
 
 /**
  * @swagger

@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { Layout, Menu, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ProfileModal from "./ProfileModal";
-import { UserOutlined, BarChartOutlined, HomeOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  BarChartOutlined,
+  HomeOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import "../styles/dashstyles.css";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -11,21 +16,54 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
+  const location = useLocation();
+  const selectedKey = location.pathname.split("/")[1] || "dashboard"; 
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       {}
-      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} className="dashboard-sidebar">
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        className="dashboard-sidebar"
+      >
         <div className="logo">Admin Dashboard</div>
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<HomeOutlined />}><Link to="/dashboard">Home</Link></Menu.Item>
-          <Menu.Item key="2" icon={<UserOutlined />}><Link to="/users">User</Link></Menu.Item>
-          <Menu.Item key="3" icon={<BarChartOutlined />}><Link to="/report">Report</Link></Menu.Item>
-          <Menu.Item key="4" onClick={() => setIsProfileModalVisible(true)} icon={<UserOutlined />}>
+
+        {}
+        <Menu theme="dark" mode="inline" selectedKeys={[selectedKey]}>
+          <Menu.Item key="dashboard" icon={<HomeOutlined />}>
+            <Link to="/dashboard">Home</Link>
+          </Menu.Item>
+          <Menu.Item key="users" icon={<UserOutlined />}>
+            <Link to="/users">User</Link>
+          </Menu.Item>
+          <Menu.Item key="report" icon={<BarChartOutlined />}>
+            <Link to="/report">Report</Link>
+          </Menu.Item>
+          <Menu.Item key="inventory" icon={<InboxOutlined />}>
+            <Link to="/inventory">Inventory</Link>
+          </Menu.Item>
+          <Menu.Item key="sale" icon={<InboxOutlined />}>
+            <Link to="/sales">Sales</Link>
+            </Menu.Item>
+            <Menu.Item key="warehouse" icon={<InboxOutlined />}>
+            <Link to="/warehouse">Warehouse</Link>
+            </Menu.Item>
+            <Menu.Item key="supplier" icon={<InboxOutlined />}>
+            <Link to="/supplier">Supplier</Link>
+            </Menu.Item>
+          <Menu.Item
+            key="profile"
+            icon={<UserOutlined />}
+            onClick={() => setIsProfileModalVisible(true)}
+          >
             Profile
           </Menu.Item>
         </Menu>
       </Sider>
 
+      {}
       <Layout>
         {}
         <Header className="dashboard-header">
@@ -38,7 +76,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
         {}
         <Content className="dashboard-content">
-          {children} {}
+          {children}
         </Content>
 
         {}
@@ -47,7 +85,11 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </Footer>
       </Layout>
 
-      <ProfileModal isVisible={isProfileModalVisible} onClose={() => setIsProfileModalVisible(false)} />
+      {}
+      <ProfileModal
+        isVisible={isProfileModalVisible}
+        onClose={() => setIsProfileModalVisible(false)}
+      />
     </Layout>
   );
 };

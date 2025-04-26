@@ -15,7 +15,7 @@ const AdminLogin: React.FC = () => {
 
     try {
       const response = await adminLogin(values);
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.token); 
       message.success("Login successful!");
       navigate("/dashboard");
     } catch (error: any) {

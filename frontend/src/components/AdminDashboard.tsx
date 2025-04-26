@@ -1,62 +1,86 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { getUsers } from "../api/api"; 
+import { getUsers, getInventory, getSales, getWarehouses } from "../api/api"; 
 import AdminLayout from "../components/AdminLayout";
 import { Table, Card, Statistic, Row, Col, Tag } from "antd";
-import { UserOutlined, ShoppingCartOutlined, DollarCircleOutlined, CheckCircleOutlined, ClockCircleOutlined, CreditCardOutlined } from "@ant-design/icons";
+import { UserOutlined, ShoppingCartOutlined, AppstoreOutlined, RiseOutlined, CheckCircleOutlined, ClockCircleOutlined, CreditCardOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 interface User {
   _id: string;
   firstName: string;
   lastName: string;
   email: string;
-  username: string;
   role: string;
 }
 
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
 const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [roleData, setRoleData] = useState<{ name: string; value: number }[]>([]);
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [sales, setSales] = useState<any[]>([]);
+  const [warehouses, setWarehouses] = useState<any[]>([]);
+  
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalInventoryItems, setTotalInventoryItems] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
+  const [monthlySales, setMonthlySales] = useState(0);
+  const [paidSales, setPaidSales] = useState(0);
+  const [unpaidSales, setUnpaidSales] = useState(0);
+  const [lowStockItems, setLowStockItems] = useState<any[]>([]);
+  const [warehouseSalesData, setWarehouseSalesData] = useState<any[]>([]);
 
-  const totalOrders = 120;
-  const deliveredOrders = 90;
-  const pendingOrders = totalOrders - deliveredOrders;
-  const totalRevenue = 50000;
-  const monthlyGrowth = 8.5;
-
-  const fetchUsers = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const data = await getUsers(1, 100);
-      setUsers(data.users);
-      setTotalUsers(data.total);
+      const userData = await getUsers(1, 100);
+      setUsers(userData.users);
+      setTotalUsers(userData.total);
 
-      const roleCounts: Record<string, number> = {};
-      data.users.forEach((user: User) => {
-        roleCounts[user.role] = (roleCounts[user.role] || 0) + 1;
+      const inventoryData = await getInventory();
+      setInventory(inventoryData);
+      setTotalInventoryItems(inventoryData.length);
+      setLowStockItems(inventoryData.filter((item: any) => item.stock < 80));
+
+      const salesData = await getSales();
+      setSales(salesData);
+      setTotalSales(salesData.length);
+
+      const currentMonth = dayjs().month();
+      const currentMonthSales = salesData.filter((sale: any) => dayjs(sale.saleDate).month() === currentMonth);
+      setMonthlySales(currentMonthSales.length);
+
+      const paid = salesData.filter((sale: any) => sale.paymentStatus === "Paid").length;
+      const unpaid = salesData.filter((sale: any) => sale.paymentStatus !== "Paid").length;
+      setPaidSales(paid);
+      setUnpaidSales(unpaid);
+
+      const warehouseData = await getWarehouses();
+      setWarehouses(warehouseData);
+
+      const warehouseSales = warehouseData.map((warehouse: any) => {
+        const salesFromWarehouse = salesData.filter((sale: any) => sale.warehouseId?._id === warehouse._id);
+        const totalAmount = salesFromWarehouse.reduce((sum: number, sale: any) => sum + sale.total, 0);
+        return {
+          name: warehouse.name,
+          total: totalAmount,
+        };
       });
+      setWarehouseSalesData(warehouseSales);
 
-      const formattedRoleData = Object.entries(roleCounts).map(([role, count]) => ({
-        name: role,
-        value: count,
-      }));
-
-      setRoleData(formattedRoleData);
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error("Error fetching dashboard data:", error);
     }
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+    fetchData();
+  }, [fetchData]);
 
   return (
     <AdminLayout>
-      <h2 style={{ marginBottom: 20 }}>👋 Welcome, Admin!</h2>
-      <p style={{ fontSize: 16, color: "#666" }}>Here's an overview of the system's performance.</p>
+      <h2 style={{ marginBottom: 20 }}>Welcome, Admin!</h2>
+      <p style={{ fontSize: 16, color: "#666" }}>Here’s your system's overview with real-time data.</p>
 
       {}
       <Row gutter={[16, 16]} style={{ marginBottom: 30 }}>
@@ -67,21 +91,17 @@ const AdminDashboard: React.FC = () => {
         </Col>
         <Col span={6}>
           <Card bordered={false}>
-            <Statistic title="Total Orders" value={totalOrders} prefix={<ShoppingCartOutlined />} />
+            <Statistic title="Total Sales" value={totalSales} prefix={<ShoppingCartOutlined />} />
           </Card>
         </Col>
         <Col span={6}>
           <Card bordered={false}>
-            <Statistic title="Total Revenue" value={`$${totalRevenue}`} prefix={<DollarCircleOutlined />} />
+            <Statistic title="Inventory Items" value={totalInventoryItems} prefix={<AppstoreOutlined />} />
           </Card>
         </Col>
         <Col span={6}>
           <Card bordered={false}>
-            <Statistic
-              title="Monthly Growth"
-              value={`${monthlyGrowth}%`}
-              valueStyle={{ color: monthlyGrowth > 0 ? "green" : "red" }}
-            />
+            <Statistic title="Monthly Sales" value={monthlySales} prefix={<RiseOutlined />} />
           </Card>
         </Col>
       </Row>
@@ -90,26 +110,25 @@ const AdminDashboard: React.FC = () => {
       <Row gutter={[16, 16]} style={{ marginBottom: 30 }}>
         <Col span={12}>
           <Card bordered={false} style={{ background: "#E3FCEF" }}>
-            <Statistic title="Delivered Orders" value={deliveredOrders} prefix={<CheckCircleOutlined />} />
+            <Statistic title="Paid Sales" value={paidSales} prefix={<CheckCircleOutlined />} />
           </Card>
         </Col>
         <Col span={12}>
           <Card bordered={false} style={{ background: "#FFE2E2" }}>
-            <Statistic title="Pending Orders" value={pendingOrders} prefix={<ClockCircleOutlined />} />
+            <Statistic title="Unpaid Sales" value={unpaidSales} prefix={<ClockCircleOutlined />} />
           </Card>
         </Col>
       </Row>
 
       {}
       <Row gutter={16} style={{ marginBottom: 30 }}>
-        {}
         <Col span={12}>
           <Card bordered={false}>
-            <h3>User Role Distribution</h3>
+            <h3>Low Stock Items</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={roleData} cx="50%" cy="50%" outerRadius={100} fill="#8884d8" dataKey="value">
-                  {roleData.map((_, index) => (
+                <Pie data={lowStockItems} dataKey="stock" nameKey="name" outerRadius={100} fill="#8884d8">
+                  {lowStockItems.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -120,17 +139,16 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </Col>
 
-        {}
         <Col span={12}>
           <Card bordered={false}>
-            <h3>User Role Breakdown</h3>
+            <h3>Total Amount Sold by Warehouse</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={roleData}>
+              <BarChart data={warehouseSalesData}>
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="value" fill="#8884d8" />
+                <Bar dataKey="total" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </Card>
@@ -138,46 +156,42 @@ const AdminDashboard: React.FC = () => {
       </Row>
 
       {}
-      <Row gutter={16} style={{ marginBottom: 30 }}>
-        {}
+      <Row gutter={16}>
         <Col span={12}>
-          <Card bordered={false} title="💳 Recent Transactions" extra={<CreditCardOutlined />}>
+          <Card bordered={false} title="🛒 Recent Sales" extra={<CreditCardOutlined />}>
             <Table
-              dataSource={[
-                { key: "1", orderId: "ORD123", customer: "John Doe", amount: "$250", status: "Completed" },
-                { key: "2", orderId: "ORD124", customer: "Alice Smith", amount: "$120", status: "Pending" },
-                { key: "3", orderId: "ORD125", customer: "Michael Brown", amount: "$450", status: "Completed" },
-                { key: "4", orderId: "ORD126", customer: "Emily Johnson", amount: "$320", status: "Failed" },
-              ]}
+              dataSource={sales.slice(0, 5)}
               columns={[
-                { title: "Order ID", dataIndex: "orderId" },
-                { title: "Customer", dataIndex: "customer" },
-                { title: "Amount", dataIndex: "amount" },
-                {
-                  title: "Status",
-                  dataIndex: "status",
+                { title: "Product", dataIndex: ["productId", "name"], key: "product" },
+                { title: "Customer", dataIndex: "customerName", key: "customer" },
+                { title: "Total", dataIndex: "total", key: "total" },
+                { 
+                  title: "Payment", 
+                  dataIndex: "paymentStatus", 
+                  key: "paymentStatus",
                   render: (status) => (
-                    <Tag color={status === "Completed" ? "green" : status === "Pending" ? "gold" : "red"}>{status}</Tag>
+                    <Tag color={status === "Paid" ? "green" : status === "Partial" ? "gold" : "red"}>
+                      {status}
+                    </Tag>
                   ),
                 },
               ]}
+              rowKey="_id"
               pagination={false}
             />
           </Card>
         </Col>
 
-        {}
         <Col span={12}>
-          <Card bordered={false} title="🆕 Recently Added Users" extra={<UserOutlined />}>
+          <Card bordered={false} title="📦 Recently Added Items" extra={<AppstoreOutlined />}>
             <Table
-              dataSource={users.slice(0, 5)}
-              rowKey="_id"
+              dataSource={inventory.slice(0, 5)}
               columns={[
-                { title: "First Name", dataIndex: "firstName" },
-                { title: "Last Name", dataIndex: "lastName" },
-                { title: "Email", dataIndex: "email" },
-                { title: "Role", dataIndex: "role" },
+                { title: "Name", dataIndex: "name", key: "name" },
+                { title: "Category", dataIndex: "category", key: "category" },
+                { title: "Stock", dataIndex: "stock", key: "stock" },
               ]}
+              rowKey="_id"
               pagination={false}
             />
           </Card>
